@@ -18,25 +18,17 @@ include_directories(
 
 install(
   PROGRAMS
-  swarm_control/graph_observer.py
-  swarm_control/pose_publisher_node.py
-  swarm_control/kinematic_node.py
-  swarm_control/reference_node.py
-  swarm_control/mpc_controller.py
-  swarm_control/visualizer_node.py
+  scripts/path_publisher.py
+  scripts/vel_publisher.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
 install(DIRECTORY
+  config  
   launch
-  models
-  params
-  rviz
-  urdf
-  worlds
   DESTINATION share/${PROJECT_NAME}/
 )
 
-ament_python_install_package(swarm_control)
+ament_python_install_package(dynamic_path_planning)
 
 ament_package()

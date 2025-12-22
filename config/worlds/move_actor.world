@@ -1,0 +1,347 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+  <world name="default">
+
+    <plugin
+      filename="gz-sim-physics-system"
+      name="gz::sim::systems::Physics">
+    </plugin>
+    <plugin
+      filename="gz-sim-user-commands-system"
+      name="gz::sim::systems::UserCommands">
+    </plugin>
+    <plugin
+      filename="gz-sim-scene-broadcaster-system"
+      name="gz::sim::systems::SceneBroadcaster">
+    </plugin>
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0.0 0.0 1</normal>
+            </plane>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0.0 0.0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.8 0.8 0.8 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ========================= -->
+    <!-- Left Wall (y = +2.5) -->
+    <!-- ========================= -->
+    <model name="left_wall">
+      <static>true</static>
+      <pose>25 2.5 1.5 0 0 0</pose>
+
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>50 0.2 3</size>
+            </box>
+          </geometry>
+        </collision>
+
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>50 0.2 3</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.7 0.7 0.7 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ========================= -->
+    <!-- Right Wall (y = -2.5) -->
+    <!-- ========================= -->
+    <model name="right_wall">
+      <static>true</static>
+      <pose>25 -2.5 1.5 0 0 0</pose>
+
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>50 0.2 3</size>
+            </box>
+          </geometry>
+        </collision>
+
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>50 0.2 3</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.7 0.7 0.7 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <include>
+      <name>actor1</name>
+      <pose>5   -1.8 0 0 0 0</pose>
+      <uri>model://DoctorFemaleWalk</uri>
+      <plugin filename="libgazebo_ros_actor_plugin.so" 
+        name="gazebo_ros_actor_plugin::GazeboRosActorCommand">
+        <namespace>actor1</namespace>
+        <follow_mode>velocity</follow_mode>
+        <vel_topic>cmd_vel</vel_topic>
+        <path_topic>cmd_path</path_topic>
+        <animation_factor>4.0</animation_factor>
+        <linear_tolerance>0.1</linear_tolerance>
+        <linear_velocity>1</linear_velocity>
+        <angular_tolerance>0.0872</angular_tolerance>
+        <angular_velocity>2.5</angular_velocity>
+        <default_rotation>1.57</default_rotation>
+      </plugin>
+    </include>
+
+    <include>
+      <name>actor2</name>
+      <pose>10  -0.6 0 0 0 0</pose>
+      <uri>model://DoctorFemaleWalk</uri>
+      <plugin filename="libgazebo_ros_actor_plugin.so" 
+        name="gazebo_ros_actor_plugin::GazeboRosActorCommand">
+        <namespace>actor2</namespace>
+        <follow_mode>velocity</follow_mode>
+        <vel_topic>cmd_vel</vel_topic>
+        <path_topic>cmd_path</path_topic>
+        <animation_factor>4.0</animation_factor>
+        <linear_tolerance>0.1</linear_tolerance>
+        <linear_velocity>1</linear_velocity>
+        <angular_tolerance>0.0872</angular_tolerance>
+        <angular_velocity>2.5</angular_velocity>
+        <default_rotation>1.57</default_rotation>
+      </plugin>
+    </include>
+
+    <include>
+      <name>actor3</name>
+      <pose>15   0.8 0 0 0 0</pose>
+      <uri>model://DoctorFemaleWalk</uri>
+      <plugin filename="libgazebo_ros_actor_plugin.so" 
+        name="gazebo_ros_actor_plugin::GazeboRosActorCommand">
+        <namespace>actor3</namespace>
+        <follow_mode>velocity</follow_mode>
+        <vel_topic>cmd_vel</vel_topic>
+        <path_topic>cmd_path</path_topic>
+        <animation_factor>4.0</animation_factor>
+        <linear_tolerance>0.1</linear_tolerance>
+        <linear_velocity>1</linear_velocity>
+        <angular_tolerance>0.0872</angular_tolerance>
+        <angular_velocity>2.5</angular_velocity>
+        <default_rotation>1.57</default_rotation>
+      </plugin>
+    </include>
+
+    <include>
+      <name>actor4</name>
+      <pose>22  -2.0 0 0 0 0</pose>
+      <uri>model://DoctorFemaleWalk</uri>
+      <plugin filename="libgazebo_ros_actor_plugin.so" 
+        name="gazebo_ros_actor_plugin::GazeboRosActorCommand">
+        <namespace>actor4</namespace>
+        <follow_mode>velocity</follow_mode>
+        <vel_topic>cmd_vel</vel_topic>
+        <path_topic>cmd_path</path_topic>
+        <animation_factor>4.0</animation_factor>
+        <linear_tolerance>0.1</linear_tolerance>
+        <linear_velocity>1</linear_velocity>
+        <angular_tolerance>0.0872</angular_tolerance>
+        <angular_velocity>2.5</angular_velocity>
+        <default_rotation>1.57</default_rotation>
+      </plugin>
+    </include>
+
+    <include>
+      <name>actor5</name>
+      <pose>30   1.2 0 0 0 0</pose>
+      <uri>model://DoctorFemaleWalk</uri>
+      <plugin filename="libgazebo_ros_actor_plugin.so" 
+        name="gazebo_ros_actor_plugin::GazeboRosActorCommand">
+        <namespace>actor5</namespace>
+        <follow_mode>velocity</follow_mode>
+        <vel_topic>cmd_vel</vel_topic>
+        <path_topic>cmd_path</path_topic>
+        <animation_factor>4.0</animation_factor>
+        <linear_tolerance>0.1</linear_tolerance>
+        <linear_velocity>1</linear_velocity>
+        <angular_tolerance>0.0872</angular_tolerance>
+        <angular_velocity>2.5</angular_velocity>
+        <default_rotation>1.57</default_rotation>
+      </plugin>
+    </include>
+
+    <include>
+      <name>actor6</name>
+      <pose>38  -0.2 0 0 0 0</pose>
+      <uri>model://DoctorFemaleWalk</uri>
+      <plugin filename="libgazebo_ros_actor_plugin.so" 
+        name="gazebo_ros_actor_plugin::GazeboRosActorCommand">
+        <namespace>actor6</namespace>
+        <follow_mode>velocity</follow_mode>
+        <vel_topic>cmd_vel</vel_topic>
+        <path_topic>cmd_path</path_topic>
+        <animation_factor>4.0</animation_factor>
+        <linear_tolerance>0.1</linear_tolerance>
+        <linear_velocity>1</linear_velocity>
+        <angular_tolerance>0.0872</angular_tolerance>
+        <angular_velocity>2.5</angular_velocity>
+        <default_rotation>1.57</default_rotation>
+      </plugin>
+    </include>
+
+    <include>
+      <name>actor7</name>
+      <pose>45   1.8 0 0 0 0</pose>
+      <uri>model://DoctorFemaleWalk</uri>
+      <plugin filename="libgazebo_ros_actor_plugin.so" 
+        name="gazebo_ros_actor_plugin::GazeboRosActorCommand">
+        <namespace>actor7</namespace>
+        <follow_mode>velocity</follow_mode>
+        <vel_topic>cmd_vel</vel_topic>
+        <path_topic>cmd_path</path_topic>
+        <animation_factor>4.0</animation_factor>
+        <linear_tolerance>0.1</linear_tolerance>
+        <linear_velocity>1</linear_velocity>
+        <angular_tolerance>0.0872</angular_tolerance>
+        <angular_velocity>2.5</angular_velocity>
+        <default_rotation>1.57</default_rotation>
+      </plugin>
+    </include>
+
+    <include>
+      <name>actor8</name>
+      <pose>40  -1.0 0 0 0 0</pose>
+      <uri>model://DoctorFemaleWalk</uri>
+      <plugin filename="libgazebo_ros_actor_plugin.so" 
+        name="gazebo_ros_actor_plugin::GazeboRosActorCommand">
+        <namespace>actor8</namespace>
+        <follow_mode>velocity</follow_mode>
+        <vel_topic>cmd_vel</vel_topic>
+        <path_topic>cmd_path</path_topic>
+        <animation_factor>4.0</animation_factor>
+        <linear_tolerance>0.1</linear_tolerance>
+        <linear_velocity>1</linear_velocity>
+        <angular_tolerance>0.0872</angular_tolerance>
+        <angular_velocity>2.5</angular_velocity>
+        <default_rotation>1.57</default_rotation>
+      </plugin>
+    </include>
+
+    <include>
+      <name>actor9</name>
+      <pose>34   0.4 0 0 0 0</pose>
+      <uri>model://DoctorFemaleWalk</uri>
+      <plugin filename="libgazebo_ros_actor_plugin.so" 
+        name="gazebo_ros_actor_plugin::GazeboRosActorCommand">
+        <namespace>actor9</namespace>
+        <follow_mode>velocity</follow_mode>
+        <vel_topic>cmd_vel</vel_topic>
+        <path_topic>cmd_path</path_topic>
+        <animation_factor>4.0</animation_factor>
+        <linear_tolerance>0.1</linear_tolerance>
+        <linear_velocity>1</linear_velocity>
+        <angular_tolerance>0.0872</angular_tolerance>
+        <angular_velocity>2.5</angular_velocity>
+        <default_rotation>1.57</default_rotation>
+      </plugin>
+    </include>
+
+    <include>
+      <name>actor10</name>
+      <pose>27   2.0 0 0 0 0</pose>
+      <uri>model://DoctorFemaleWalk</uri>
+      <plugin filename="libgazebo_ros_actor_plugin.so" 
+        name="gazebo_ros_actor_plugin::GazeboRosActorCommand">
+        <namespace>actor10</namespace>
+        <follow_mode>velocity</follow_mode>
+        <vel_topic>cmd_vel</vel_topic>
+        <path_topic>cmd_path</path_topic>
+        <animation_factor>4.0</animation_factor>
+        <linear_tolerance>0.1</linear_tolerance>
+        <linear_velocity>1</linear_velocity>
+        <angular_tolerance>0.0872</angular_tolerance>
+        <angular_velocity>2.5</angular_velocity>
+        <default_rotation>1.57</default_rotation>
+      </plugin>
+    </include>
+
+    <include>
+      <name>actor11</name>
+      <pose>18  -1.4 0 0 0 0</pose>
+      <uri>model://DoctorFemaleWalk</uri>
+      <plugin filename="libgazebo_ros_actor_plugin.so" 
+        name="gazebo_ros_actor_plugin::GazeboRosActorCommand">
+        <namespace>actor11</namespace>
+        <follow_mode>velocity</follow_mode>
+        <vel_topic>cmd_vel</vel_topic>
+        <path_topic>cmd_path</path_topic>
+        <animation_factor>4.0</animation_factor>
+        <linear_tolerance>0.1</linear_tolerance>
+        <linear_velocity>1</linear_velocity>
+        <angular_tolerance>0.0872</angular_tolerance>
+        <angular_velocity>2.5</angular_velocity>
+        <default_rotation>1.57</default_rotation>
+      </plugin> 
+    </include>
+
+    <include>
+      <name>actor12</name>
+      <pose>8    0.2 0 0 0 0</pose>
+      <uri>model://DoctorFemaleWalk</uri>
+      <plugin filename="libgazebo_ros_actor_plugin.so" 
+        name="gazebo_ros_actor_plugin::GazeboRosActorCommand">
+        <namespace>actor12</namespace>
+        <follow_mode>velocity</follow_mode>
+        <vel_topic>cmd_vel</vel_topic>
+        <path_topic>cmd_path</path_topic>
+        <animation_factor>4.0</animation_factor>
+        <linear_tolerance>0.1</linear_tolerance>
+        <linear_velocity>1</linear_velocity>
+        <angular_tolerance>0.0872</angular_tolerance>
+        <angular_velocity>2.5</angular_velocity>
+        <default_rotation>1.57</default_rotation>
+      </plugin>
+    </include>
+
+  </world>
+</sdf>
