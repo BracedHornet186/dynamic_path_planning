@@ -26,6 +26,8 @@ install(
 install(DIRECTORY
   config  
   launch
+  models
+  urdf
   DESTINATION share/${PROJECT_NAME}/
 )
 

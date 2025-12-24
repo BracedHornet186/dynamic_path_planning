@@ -125,6 +125,7 @@
         <follow_mode>velocity</follow_mode>
         <vel_topic>cmd_vel</vel_topic>
         <path_topic>cmd_path</path_topic>
+        <pose_topic>pose</pose_topic>
         <animation_factor>4.0</animation_factor>
         <linear_tolerance>0.1</linear_tolerance>
         <linear_velocity>1</linear_velocity>
@@ -144,6 +145,7 @@
         <follow_mode>velocity</follow_mode>
         <vel_topic>cmd_vel</vel_topic>
         <path_topic>cmd_path</path_topic>
+        <pose_topic>pose</pose_topic>
         <animation_factor>4.0</animation_factor>
         <linear_tolerance>0.1</linear_tolerance>
         <linear_velocity>1</linear_velocity>
@@ -163,6 +165,7 @@
         <follow_mode>velocity</follow_mode>
         <vel_topic>cmd_vel</vel_topic>
         <path_topic>cmd_path</path_topic>
+        <pose_topic>pose</pose_topic>
         <animation_factor>4.0</animation_factor>
         <linear_tolerance>0.1</linear_tolerance>
         <linear_velocity>1</linear_velocity>
@@ -182,6 +185,7 @@
         <follow_mode>velocity</follow_mode>
         <vel_topic>cmd_vel</vel_topic>
         <path_topic>cmd_path</path_topic>
+        <pose_topic>pose</pose_topic>
         <animation_factor>4.0</animation_factor>
         <linear_tolerance>0.1</linear_tolerance>
         <linear_velocity>1</linear_velocity>
@@ -201,6 +205,7 @@
         <follow_mode>velocity</follow_mode>
         <vel_topic>cmd_vel</vel_topic>
         <path_topic>cmd_path</path_topic>
+        <pose_topic>pose</pose_topic>
         <animation_factor>4.0</animation_factor>
         <linear_tolerance>0.1</linear_tolerance>
         <linear_velocity>1</linear_velocity>
@@ -220,6 +225,7 @@
         <follow_mode>velocity</follow_mode>
         <vel_topic>cmd_vel</vel_topic>
         <path_topic>cmd_path</path_topic>
+        <pose_topic>pose</pose_topic>
         <animation_factor>4.0</animation_factor>
         <linear_tolerance>0.1</linear_tolerance>
         <linear_velocity>1</linear_velocity>
@@ -239,6 +245,7 @@
         <follow_mode>velocity</follow_mode>
         <vel_topic>cmd_vel</vel_topic>
         <path_topic>cmd_path</path_topic>
+        <pose_topic>pose</pose_topic>
         <animation_factor>4.0</animation_factor>
         <linear_tolerance>0.1</linear_tolerance>
         <linear_velocity>1</linear_velocity>
@@ -258,6 +265,7 @@
         <follow_mode>velocity</follow_mode>
         <vel_topic>cmd_vel</vel_topic>
         <path_topic>cmd_path</path_topic>
+        <pose_topic>pose</pose_topic>
         <animation_factor>4.0</animation_factor>
         <linear_tolerance>0.1</linear_tolerance>
         <linear_velocity>1</linear_velocity>
@@ -277,6 +285,7 @@
         <follow_mode>velocity</follow_mode>
         <vel_topic>cmd_vel</vel_topic>
         <path_topic>cmd_path</path_topic>
+        <pose_topic>pose</pose_topic>
         <animation_factor>4.0</animation_factor>
         <linear_tolerance>0.1</linear_tolerance>
         <linear_velocity>1</linear_velocity>
@@ -296,6 +305,7 @@
         <follow_mode>velocity</follow_mode>
         <vel_topic>cmd_vel</vel_topic>
         <path_topic>cmd_path</path_topic>
+        <pose_topic>pose</pose_topic>
         <animation_factor>4.0</animation_factor>
         <linear_tolerance>0.1</linear_tolerance>
         <linear_velocity>1</linear_velocity>
@@ -315,6 +325,7 @@
         <follow_mode>velocity</follow_mode>
         <vel_topic>cmd_vel</vel_topic>
         <path_topic>cmd_path</path_topic>
+        <pose_topic>pose</pose_topic>
         <animation_factor>4.0</animation_factor>
         <linear_tolerance>0.1</linear_tolerance>
         <linear_velocity>1</linear_velocity>
@@ -334,6 +345,7 @@
         <follow_mode>velocity</follow_mode>
         <vel_topic>cmd_vel</vel_topic>
         <path_topic>cmd_path</path_topic>
+        <pose_topic>pose</pose_topic>
         <animation_factor>4.0</animation_factor>
         <linear_tolerance>0.1</linear_tolerance>
         <linear_velocity>1</linear_velocity>
