@@ -147,7 +147,6 @@ def generate_launch_description():
         'y_pose', default_value='0.0',
         description='Specify namespace of the robot')
     
-
     return LaunchDescription([
         declare_use_sim_time,
         verbose_arg,

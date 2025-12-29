@@ -5,7 +5,7 @@
   <name>dynamic_path_planning</name>
   <version>2.2.6</version>
   <description>
-    Multi robot support TurtleBot3 in Gazebo
+    Dynamic path planning using TurtleBot3 in Gazebo
   </description>
 
   <maintainer email="yashpurswani4@gmail.com">Yash Purswani</maintainer>
@@ -15,17 +15,14 @@
   <buildtool_depend>ament_cmake_python</buildtool_depend>
 
   <!-- Runtime dependencies -->
+  <exec_depend>rclcpp</exec_depend>
   <exec_depend>rclpy</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>nav_msgs</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
-  <exec_depend>swarm_control_msgs</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
-  <exec_depend>nav2_common</exec_depend>
-  <exec_depend>navigation2</exec_depend>
-  <exec_depend>slam_toolbox</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

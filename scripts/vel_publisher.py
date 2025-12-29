@@ -14,7 +14,7 @@ class HumanLikeWalker(Node):
         # Parameters
         self.declare_parameter('actor_id', 1)
         self.declare_parameter('linear_speed', 1.0)
-        self.declare_parameter('diagonal_prob', 0.08)
+        self.declare_parameter('diagonal_prob', 0.1)
         self.declare_parameter('max_ang_speed', 0.4)
         self.declare_parameter('update_rate', 10.0)
 
