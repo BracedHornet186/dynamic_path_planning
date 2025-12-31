@@ -16,21 +16,21 @@ class PedestrianPredictor(Node):
         super().__init__('pedestrian_predictor')
 
         # ---------------- Parameters ----------------
-        self.declare_parameter('actor_id', 1)
-        self.declare_parameter('horizon', 10)
+        self.declare_parameter('num_actors', 12)
+        self.declare_parameter('horizon', 5)
         self.declare_parameter('linear_speed', 1.0)
         self.declare_parameter('diagonal_prob', 0.1)
         self.declare_parameter('linear_prob', 0.9)
         self.declare_parameter('update_rate', 10.0)
 
-        self.actor_id = self.get_parameter('actor_id').value
+        self.num_actors = self.get_parameter('num_actors').value
         self.horizon = self.get_parameter('horizon').value
         self.speed = self.get_parameter('linear_speed').value
         self.diagonal_prob = self.get_parameter('diagonal_prob').value
         self.linear_prob = self.get_parameter('linear_prob').value
         self.update_rate = self.get_parameter('update_rate').value
 
-        self.pose = None
+        self.poses = {f'actor{i}': None for i in range(1, self.num_actors + 1)}
         self.dt = 0.2
         self.weights = [self.linear_prob, self.diagonal_prob]
         self.num_modes = len(self.weights)
@@ -38,11 +38,11 @@ class PedestrianPredictor(Node):
         # Noise growth
         self.base_cov = 0.05 * np.eye(2)
 
-        # Subscriber
-        self.create_subscription(PoseStamped, f'/actor{self.actor_id}/pose', self.pose_callback, 10)
+        # Subscribers
+        self.subscribers = {f'actor{i}': self.create_subscription(PoseStamped, f'/actor{i}/pose', self.make_pose_callback(i), 10) for i in range(1, self.num_actors + 1)}
 
-        # Publisher
-        self.pred_pub = self.create_publisher(PoseWithCovarianceStamped, f'/pedestrian{self.actor_id}/est_pose', 10)
+        # Publishers
+        self.vel_publishers = {f'pedestrian{i}': self.create_publisher(PoseWithCovarianceStamped, f'/pedestrian{i}/est_pose', 10) for i in range(1, self.num_actors + 1)}
 
         self.timer = self.create_timer(1.0 / self.update_rate, self.predict)
 
@@ -50,90 +50,97 @@ class PedestrianPredictor(Node):
 
     # -------------------------------------------------
 
-    def pose_callback(self, msg):
-        p = msg.pose.position
-        self.pose = np.array([p.x, p.y])
+    def make_pose_callback(self, actor_id):
+        def pose_callback(msg: PoseStamped):
+            p = msg.pose.position
+            self.poses[f'actor{actor_id}'] = np.array([p.x, p.y])
+        return pose_callback
 
     # -------------------------------------------------
 
     def predict(self):
-        if self.pose is None:
-            return
-
-        pos = self.pose
         lambda_decay = 0.3
 
-        mus = []
-        Sigmas = []
-        weights_t = []
+        for i in range(1, self.num_actors + 1):
+            key = f'actor{i}'
+            pos = self.poses[key]
 
-        for t in range(self.horizon):
-            mean_modes = []
-            cov_modes = []
+            # Skip if pose not yet received
+            if pos is None:
+                continue
 
-            for mode in range(self.num_modes):
-                if mode == 0:
-                    direction = np.array([1.0, 0.0])
-                else:
-                    direction = np.array([1.0 / np.sqrt(2),
-                                        1.0 / np.sqrt(2)])
+            mus = []
+            Sigmas = []
+            weights_t = []
 
-                direction /= np.linalg.norm(direction)
-                velocity = self.speed * direction
+            for t in range(self.horizon):
+                mean_modes = []
+                cov_modes = []
 
-                mean = pos + velocity * self.dt * (t + 1)
-                cov = self.base_cov * (t + 1)
+                for mode in range(self.num_modes):
+                    if mode == 0:
+                        direction = np.array([1.0, 0.0])
+                    else:
+                        direction = np.array([1.0 / np.sqrt(2),
+                                            1.0 / np.sqrt(2)])
 
-                mean_modes.append(mean)
-                cov_modes.append(cov)
+                    direction /= np.linalg.norm(direction)
+                    velocity = self.speed * direction
 
-            # MoG moment matching
-            mu_t = np.average(mean_modes, axis=0, weights=self.weights)
-            Sigma_t = np.zeros((2, 2))
+                    mean = pos + velocity * self.dt * (t + 1)
+                    cov = self.base_cov * (t + 1)
 
-            for w, m, C in zip(self.weights, mean_modes, cov_modes):
-                diff = (m - mu_t).reshape(2, 1)
-                Sigma_t += w * (C + diff @ diff.T)
+                    mean_modes.append(mean)
+                    cov_modes.append(cov)
 
-            alpha_t = np.exp(-lambda_decay * t)
+                # ---- MoG moment matching ----
+                mu_t = np.average(mean_modes, axis=0, weights=self.weights)
+                Sigma_t = np.zeros((2, 2))
 
-            mus.append(mu_t)
-            Sigmas.append(Sigma_t)
-            weights_t.append(alpha_t)
+                for w, m, C in zip(self.weights, mean_modes, cov_modes):
+                    diff = (m - mu_t).reshape(2, 1)
+                    Sigma_t += w * (C + diff @ diff.T)
 
-        weights_t = np.array(weights_t)
-        weights_t /= np.sum(weights_t)
+                alpha_t = np.exp(-lambda_decay * t)
 
-        # Time-decayed aggregation
-        mu_bar = np.sum([w * m for w, m in zip(weights_t, mus)], axis=0)
+                mus.append(mu_t)
+                Sigmas.append(Sigma_t)
+                weights_t.append(alpha_t)
 
-        Sigma_bar = np.zeros((2, 2))
-        for w, m, S in zip(weights_t, mus, Sigmas):
-            diff = (m - mu_bar).reshape(2, 1)
-            Sigma_bar += w * (S + diff @ diff.T)
+            # ---- Time-decayed aggregation ----
+            weights_t = np.array(weights_t)
+            weights_t /= np.sum(weights_t)
 
-        # Publish PoseWithCovarianceStamped
-        msg = PoseWithCovarianceStamped()
-        msg.header.stamp = self.get_clock().now().to_msg()
-        msg.header.frame_id = 'map'
+            mu_bar = np.sum([w * m for w, m in zip(weights_t, mus)], axis=0)
 
-        msg.pose.pose.position.x = float(mu_bar[0])
-        msg.pose.pose.position.y = float(mu_bar[1])
-        msg.pose.pose.position.z = 0.0
-        msg.pose.pose.orientation.w = 1.0
+            Sigma_bar = np.zeros((2, 2))
+            for w, m, S in zip(weights_t, mus, Sigmas):
+                diff = (m - mu_bar).reshape(2, 1)
+                Sigma_bar += w * (S + diff @ diff.T)
 
-        cov = np.zeros((6, 6))
-        cov[0, 0] = Sigma_bar[0, 0]
-        cov[0, 1] = Sigma_bar[0, 1]
-        cov[1, 0] = Sigma_bar[1, 0]
-        cov[1, 1] = Sigma_bar[1, 1]
-        cov[2, 2] = 1.0       # z uncertainty
-        cov[3, 3] = 10.0      # roll
-        cov[4, 4] = 10.0      # pitch
-        cov[5, 5] = 1.0       # yaw
+            # ---- Publish ----
+            msg = PoseWithCovarianceStamped()
+            msg.header.stamp = self.get_clock().now().to_msg()
+            msg.header.frame_id = 'map'
 
-        msg.pose.covariance = cov.flatten().tolist()
-        self.pred_pub.publish(msg)
+            msg.pose.pose.position.x = float(mu_bar[0])
+            msg.pose.pose.position.y = float(mu_bar[1])
+            msg.pose.pose.position.z = 0.0
+            msg.pose.pose.orientation.w = 1.0
+
+            cov = np.zeros((6, 6))
+            cov[0, 0] = Sigma_bar[0, 0]
+            cov[0, 1] = Sigma_bar[0, 1]
+            cov[1, 0] = Sigma_bar[1, 0]
+            cov[1, 1] = Sigma_bar[1, 1]
+            cov[2, 2] = 1.0
+            cov[3, 3] = 10.0
+            cov[4, 4] = 10.0
+            cov[5, 5] = 1.0
+
+            msg.pose.covariance = cov.flatten().tolist()
+
+            self.vel_publishers[f'pedestrian{i}'].publish(msg)
 
 # -----------------------------------------------------
 

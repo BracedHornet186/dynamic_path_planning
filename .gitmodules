@@ -1,0 +1,3 @@
+[submodule "MPPI-Generic"]
+	path = MPPI-Generic
+	url = https://github.com/BracedHornet186/MPPI-Generic.git

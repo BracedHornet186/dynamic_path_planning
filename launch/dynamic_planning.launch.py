@@ -17,18 +17,12 @@ def launch_setup(context, *args, **kwargs):
     horizon = int(LaunchConfiguration('horizon').perform(context))
     update_rate = float(LaunchConfiguration('update_rate').perform(context))
 
-    vel_publisher_nodes = []
-    ped_predictor_nodes = []
-
-    for actor_id in range(1, num_actors + 1):
-
-        vel_publisher_nodes.append(
-            Node(
+    vel_publisher_node =  Node(
                 package='dynamic_path_planning',
                 executable='vel_publisher.py',
-                name=f'vel_publisher_actor_{actor_id}',
+                name=f'vel_publisher',
                 parameters=[{
-                    'actor_id': actor_id,
+                    'num_actors': num_actors,
                     'linear_speed': linear_speed,
                     'diagonal_prob': diagonal_prob,
                     'max_ang_speed': max_ang_speed,
@@ -36,23 +30,20 @@ def launch_setup(context, *args, **kwargs):
                 }],
                 output='screen'
             )
-        )
 
-        ped_predictor_nodes.append(
-            Node(
-                package='dynamic_path_planning',
-                executable='pedestrian_predictor.py',
-                name=f'pedestrian_predictor_{actor_id}',
-                parameters=[{
-                    'actor_id': actor_id,
-                    'horizon': horizon,
-                    'linear_speed': linear_speed,
-                    'diagonal_prob': diagonal_prob,
-                    'linear_prob': linear_prob,
-                    'update_rate': update_rate
-                }],
-                output='screen'
-            )
+    ped_predictor_node = Node(
+            package='dynamic_path_planning',
+            executable='pedestrian_predictor.py',
+            name=f'pedestrian_predictor',
+            parameters=[{
+                'num_actors': num_actors,
+                'horizon': horizon,
+                'linear_speed': linear_speed,
+                'diagonal_prob': diagonal_prob,
+                'linear_prob': linear_prob,
+                'update_rate': update_rate
+            }],
+            output='screen'
         )
 
     collision_monitor_node = Node(
@@ -66,7 +57,7 @@ def launch_setup(context, *args, **kwargs):
         }],
         output='screen'
     )
-    return vel_publisher_nodes + ped_predictor_nodes + [collision_monitor_node]
+    return [collision_monitor_node, vel_publisher_node, ped_predictor_node]
 
 
 def generate_launch_description():
@@ -93,7 +84,7 @@ def generate_launch_description():
     )
     declare_horizon = DeclareLaunchArgument(
         'horizon',
-        default_value='10',
+        default_value='5',
         description='Time Horizon of the predictor'
     )
     declare_update_rate = DeclareLaunchArgument(

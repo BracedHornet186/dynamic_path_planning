@@ -17,6 +17,12 @@ find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 
+# Find MPPI-Generic
+find_package(MPPI-Generic REQUIRED)
+find_package(Eigen3 REQUIRED)
+find_package(CUDA REQUIRED)
+find_package(yaml-cpp REQUIRED)
+
 enable_language(CUDA)
 
 include_directories(
