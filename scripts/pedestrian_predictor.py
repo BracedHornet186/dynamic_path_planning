@@ -3,7 +3,7 @@
 import rclpy
 from rclpy.node import Node
 import numpy as np
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import Pose
 from geometry_msgs.msg import PoseWithCovarianceStamped
 
 class PedestrianPredictor(Node):
@@ -39,7 +39,7 @@ class PedestrianPredictor(Node):
         self.base_cov = 0.05 * np.eye(2)
 
         # Subscribers
-        self.subscribers = {f'actor{i}': self.create_subscription(PoseStamped, f'/actor{i}/pose', self.make_pose_callback(i), 10) for i in range(1, self.num_actors + 1)}
+        self.subscribers = {f'actor{i}': self.create_subscription(Pose, f'/actor{i}/pose', self.make_pose_callback(i), 10) for i in range(1, self.num_actors + 1)}
 
         # Publishers
         self.vel_publishers = {f'pedestrian{i}': self.create_publisher(PoseWithCovarianceStamped, f'/pedestrian{i}/est_pose', 10) for i in range(1, self.num_actors + 1)}
@@ -51,8 +51,8 @@ class PedestrianPredictor(Node):
     # -------------------------------------------------
 
     def make_pose_callback(self, actor_id):
-        def pose_callback(msg: PoseStamped):
-            p = msg.pose.position
+        def pose_callback(msg: Pose):
+            p = msg.position
             self.poses[f'actor{actor_id}'] = np.array([p.x, p.y])
         return pose_callback
 

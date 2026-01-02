@@ -46,18 +46,20 @@ def launch_setup(context, *args, **kwargs):
             output='screen'
         )
 
-    collision_monitor_node = Node(
+    mppi_controller_node = Node(
         package='dynamic_path_planning',
-        executable='mc_collision_monitor',
-        name='mc_collision_monitor_cuda',
+        executable='mppi_controller',
+        name='mppi_controller_cuda',
         parameters=[{
-            'delta_radius': delta_radius,
-            'num_mc_samples': 256,
-            'update_rate': update_rate
         }],
         output='screen'
     )
-    return [collision_monitor_node, vel_publisher_node, ped_predictor_node]
+
+    return ([ 
+        # vel_publisher_node, 
+        ped_predictor_node,
+        mppi_controller_node
+    ])
 
 
 def generate_launch_description():

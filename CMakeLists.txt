@@ -3,7 +3,7 @@ project(dynamic_path_planning LANGUAGES CXX CUDA)
 
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 17)
 endif()
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -29,20 +29,23 @@ include_directories(
   include
   )
 
-add_executable(mc_collision_monitor
-    src/mc_collision_monitor_node.cu
-    src/mc_collision_kernel.cu
+add_executable(mppi_controller
+    src/mppi_controller_node.cu
 )
-
-set_target_properties(mc_collision_monitor PROPERTIES
+target_include_directories(mppi_controller PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+  ${MPPI_INCLUDE_DIRS}
+)
+set_target_properties(mppi_controller PROPERTIES
     CUDA_SEPARABLE_COMPILATION ON
 )
-
-target_link_libraries(mc_collision_monitor
-    cuda
+target_link_libraries(mppi_controller
+  MPPI::MPPI
+  Eigen3::Eigen
+  ${CUDA_LIBRARIES}
 )
-
-ament_target_dependencies(mc_collision_monitor
+ament_target_dependencies(mppi_controller
   rclcpp
   std_msgs
   geometry_msgs
@@ -51,13 +54,12 @@ ament_target_dependencies(mc_collision_monitor
 
 install(
   TARGETS
-  mc_collision_monitor
+  mppi_controller
   DESTINATION lib/${PROJECT_NAME}
 )
 
 install(
   PROGRAMS
-  scripts/path_publisher.py
   scripts/vel_publisher.py
   scripts/pedestrian_predictor.py
   scripts/mc_collision_monitor.py
