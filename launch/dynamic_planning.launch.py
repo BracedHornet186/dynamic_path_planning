@@ -56,7 +56,7 @@ def launch_setup(context, *args, **kwargs):
     )
 
     return ([ 
-        # vel_publisher_node, 
+        vel_publisher_node, 
         ped_predictor_node,
         mppi_controller_node
     ])

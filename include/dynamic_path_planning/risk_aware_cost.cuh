@@ -27,7 +27,7 @@ struct RiskAwareCostParams : public CostParams<DYN_T::CONTROL_DIM>
   int num_mc_samples = 256;
 
   float w_soft = 0.0f;
-  float w_hard = 0.0f;`
+  float w_hard = 0.0f;
   float sigma = 0.05f;
 
   unsigned long seed = 0;
