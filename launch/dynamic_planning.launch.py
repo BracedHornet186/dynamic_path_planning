@@ -38,10 +38,8 @@ def launch_setup(context, *args, **kwargs):
             parameters=[{
                 'num_actors': num_actors,
                 'horizon': horizon,
-                'linear_speed': linear_speed,
-                'diagonal_prob': diagonal_prob,
-                'linear_prob': linear_prob,
-                'update_rate': update_rate
+                'update_rate': update_rate,
+                'process_noise': 0.05
             }],
             output='screen'
         )

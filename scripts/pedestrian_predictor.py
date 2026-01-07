@@ -14,17 +14,16 @@ class PedestrianPredictor(Node):
         # ---------------- Parameters ----------------
         self.declare_parameter('num_actors', 12)
         self.declare_parameter('horizon', 5)
-        self.declare_parameter('dt', 0.2)
+        self.declare_parameter('update_rate', 10.0)
         self.declare_parameter('process_noise', 0.05)
 
         self.num_actors = self.get_parameter('num_actors').value
         self.horizon = self.get_parameter('horizon').value
-        self.dt = self.get_parameter('dt').value
+        self.dt = 1.0 / self.get_parameter('update_rate').value
         self.q = self.get_parameter('process_noise').value
 
         # State storage
         self.poses = {f'actor{i}': None for i in range(1, self.num_actors + 1)}
-        self.prev_poses = {f'actor{i}': None for i in range(1, self.num_actors + 1)}
         self.velocities = {f'actor{i}': np.zeros(2) for i in range(1, self.num_actors + 1)}
 
         # Subscribers
@@ -58,11 +57,14 @@ class PedestrianPredictor(Node):
         def callback(msg: Pose):
             key = f'actor{actor_id}'
             p = np.array([msg.position.x, msg.position.y])
+            noise = np.random.normal(0, 0.01, size=2)
+            p += noise
 
-            if self.poses[key] is not None:
+            if self.poses[key] is None:
+                self.velocities[key] = np.zeros(2)
+            else:
                 self.velocities[key] = (p - self.poses[key]) / self.dt
 
-            self.prev_poses[key] = self.poses[key]
             self.poses[key] = p
         return callback
 
