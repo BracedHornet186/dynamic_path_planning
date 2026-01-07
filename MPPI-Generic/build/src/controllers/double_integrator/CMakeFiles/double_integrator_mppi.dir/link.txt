@@ -1,1 +1,0 @@
-/usr/bin/g++ -fPIC -shared -Wl,-soname,libdouble_integrator_mppi.so -o ../../../lib/libdouble_integrator_mppi.so @CMakeFiles/double_integrator_mppi.dir/objects1.rsp @CMakeFiles/double_integrator_mppi.dir/linkLibs.rsp -L"/usr/local/cuda/targets/x86_64-linux/lib/stubs" -L"/usr/local/cuda/targets/x86_64-linux/lib"
