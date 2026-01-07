@@ -1,0 +1,49 @@
+mppi_cmd_vel_node:
+  ros__parameters:
+
+    # Controller timing
+    update_rate: 10.0        # Hz (MPPI update frequency)
+    dt: 0.05                 # MPPI integration timestep [s]
+
+    # Robot limits
+    max_linear_vel: 1.0      # m/s
+    max_angular_vel: 0.5     # rad/s
+
+    # Goal (global)
+    goal:
+      x: 50.0
+      y: 0.0
+      yaw: 0.0
+
+    # MPPI core parameters
+    num_rollouts: 2048       # (compile-time, for documentation)
+    num_timesteps: 100       # (compile-time, for documentation)
+
+    # Sampling / exploration
+    control_noise_std:
+      linear: 0.3            # std dev for v sampling
+      angular: 0.5           # std dev for yaw-rate sampling
+
+    # Cost: tracking
+    tracking_weights:
+      x: 0.001
+      y: 0.001
+      yaw: 0.0               # usually keep yaw free
+
+    # Cost: speed & rotation regularization
+    v_ref: 1.0               # desired cruising speed
+    w_ref: 0.0
+    w_speed: 0.0             # penalty on (v - v_ref)^2
+    w_rotation: 0.0          # keep zero unless you want smooth turns
+
+    # Risk-aware cost (DRA-MPPI)
+    num_actors: 12           # number of pedestrians
+    delta_radius: 0.5        # collision radius [m]
+    num_mc_samples: 256      # Monte-Carlo samples per rollout
+
+    w_soft: 100.0            # soft risk penalty
+    w_hard: 1000.0           # hard rejection penalty
+    sigma: 0.05              # risk threshold
+
+    # Debug / safety 
+    enable_logging: false

@@ -53,9 +53,28 @@ public:
     delta_           = this->declare_parameter("delta_radius", 0.5);
     num_mc_samples_  = this->declare_parameter("num_mc_samples", 256);
     dt_              = this->declare_parameter("dt", 0.05);
-    max_v_           = this->declare_parameter("max_linear_vel", 1.5);
+    max_v_           = this->declare_parameter("max_linear_vel", 1.0);
     max_w_           = this->declare_parameter("max_angular_vel", 0.5);
     rate_            = this->declare_parameter("update_rate", 10.0);
+
+    goal_x_   = this->declare_parameter("goal.x", 50.0);
+    goal_y_   = this->declare_parameter("goal.y", 0.0);
+    goal_yaw_ = this->declare_parameter("goal.yaw", 0.0);
+
+    noise_stddev_linear_ = this->declare_parameter("control_noise_std._linear", 0.3);
+    noise_stddev_angular_ = this->declare_parameter("control_noise_std._angular", 0.5);
+
+    tracking_weights_x_ = this->declare_parameter("tracking_weights.x", 1.0);
+    tracking_weights_y_ = this->declare_parameter("tracking_weights.y", 1.0);
+    tracking_weights_yaw_ = this->declare_parameter("tracking_weights.yaw", 0.0);
+    v_ref_ = this->declare_parameter("v_ref", 0.0);
+    w_ref_ = this->declare_parameter("w_ref", 0.0);
+    w_speed_ = this->declare_parameter("w_speed", 0.0);
+    w_rotation_ = this->declare_parameter("w_rotation", 0.0);
+
+    w_soft_ = this->declare_parameter("w_soft", 10.0);
+    w_hard_ = this->declare_parameter("w_hard", 100000.0);
+    sigma_ = this->declare_parameter("sigma", 0.05);
 
     // ---------------- ROS I/O ----------------
     odom_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
@@ -88,8 +107,8 @@ public:
 
     // Sampler
     SAMPLING_T::SAMPLING_PARAMS_T sampler_params;
-    sampler_params.std_dev[0] = 0.3f;
-    sampler_params.std_dev[1] = 0.5f;
+    sampler_params.std_dev[0] = noise_stddev_linear_;
+    sampler_params.std_dev[1] = noise_stddev_angular_;
     sampler_ = std::make_shared<SAMPLING_T>(sampler_params);
 
     CONTROLLER_PARAMS_T params;
@@ -163,20 +182,16 @@ private:
 
     auto params = cost_->getParams();
 
-    constexpr float GOAL_X = 50.0f;
-    constexpr float GOAL_Y = 0.0f;
-    constexpr float GOAL_YAW = 0.0f;
-
     // ---------- Tracking weights ----------
-    params.tracking_weights[0] = 1.0f;
-    params.tracking_weights[1] = 1.0f;
-    params.tracking_weights[2] = 0.0f;
+    params.tracking_weights[0] = tracking_weights_x_;
+    params.tracking_weights[1] = tracking_weights_y_;
+    params.tracking_weights[2] = tracking_weights_yaw_;
 
     for (int t = 0; t < NUM_TIMESTEPS; ++t)
     {
-      params.goal[t * 3 + 0] = GOAL_X;
-      params.goal[t * 3 + 1] = GOAL_Y;
-      params.goal[t * 3 + 2] = GOAL_YAW;
+      params.goal[t * 3 + 0] = goal_x_;
+      params.goal[t * 3 + 1] = goal_y_;
+      params.goal[t * 3 + 2] = goal_yaw_;
     }
 
     params.pedestrians   = d_peds_;
@@ -187,8 +202,14 @@ private:
       static_cast<unsigned long>(
         std::chrono::high_resolution_clock::now()
           .time_since_epoch().count());
-    params.v_ref   = 1.0f;   // desired forward speed
-    params.w_speed = 5.0f;   // strong enough
+    params.v_ref   = v_ref_;
+    params.w_ref   = w_ref_;
+    params.w_speed = w_speed_;
+    params.w_rotation = w_rotation_;
+
+    params.w_soft = w_soft_;
+    params.w_hard = w_hard_;
+    params.sigma = sigma_;
 
     cost_->setParams(params);
 
@@ -232,6 +253,11 @@ private:
   int num_peds_;
   float delta_;
   int num_mc_samples_;
+  float goal_x_, goal_y_, goal_yaw_;
+  float noise_stddev_linear_, noise_stddev_angular_;
+  float w_soft_, w_hard_, sigma_;
+  float v_ref_, w_ref_, w_speed_, w_rotation_;
+  float tracking_weights_x_, tracking_weights_y_, tracking_weights_yaw_;
 };
 
 // ===================== main =====================

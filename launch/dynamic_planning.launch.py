@@ -48,8 +48,9 @@ def launch_setup(context, *args, **kwargs):
         package='dynamic_path_planning',
         executable='mppi_controller',
         name='mppi_controller_cuda',
-        parameters=[{
-        }],
+        parameters=[
+            "config/mppi_params.yaml",
+        ],
         output='screen'
     )
 
